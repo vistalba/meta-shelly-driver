@@ -69,8 +69,8 @@
     "buttons":{
         "POWER ON":    {"label":"", "type":"static",   "command":"", "evaldo":[{"test":true,"then":"__INITIALISE", "or":""}]},
         "POWER OFF":   {"label":"", "type":"static",   "command":"", "evaldo":[{"test":true,"then":"__CLEANUP",    "or":""}]},
-        "SWITCHON":    {"label":"", "type":"http-get", "command":"http://$DeviceUsername:$DevicePassword@$DeviceURI:$DevicePort/light/0?turn=on",  "evalwrite":[{"variable":"PowerStatus","value":true}], "evaldo":[{"test":true,"then":"__INITIALISE", "or":""}] },
-        "SWITCHOFF":   {"label":"", "type":"http-get", "command":"http://$DeviceUsername:$DevicePassword@$DeviceURI:$DevicePort/light/0?turn=off", "evalwrite":[{"variable":"PowerStatus","value":false}], "evaldo":[{"test":true,"then":"__CLEANUP",    "or":""}] },
+        "SWITCHON":    {"label":"", "type":"http-get", "command":"http://$DeviceUsername:$DevicePassword@$DeviceURI:$DevicePort/light/0?turn=on",  "evalwrite":[{"variable":"PowerStatus","value":true}] },
+        "SWITCHOFF":   {"label":"", "type":"http-get", "command":"http://$DeviceUsername:$DevicePassword@$DeviceURI:$DevicePort/light/0?turn=off", "evalwrite":[{"variable":"PowerStatus","value":false}] },
         "POWER TOGGLE":{"label":"", "type":"http-get", "command":"http://$DeviceUsername:$DevicePassword@$DeviceURI:$DevicePort/light/0?turn=toggle"}
     }
   }
