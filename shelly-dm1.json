@@ -41,8 +41,8 @@
                         "queryresult" : "$.",
                         "evalwrite":[
                         {"variable":"NewDevice",    "value":"DYNAMIK let device = $NewDevice; device.name = JSON.parse(\"$Result\").name; device.model_name= JSON.parse(\"$Result\").device.type; JSON.stringify(device); "},
-                        {"variable":"MyDevices",    "value":"DYNAMIK let device = $NewDevice; let mydevices = $MyDevices; ((mydevices.findIndex(i=>i.ip==device.ip)==-1) ? mydevices.push(device) : mydevices); JSON.stringify(mydevices); "}
-                         ],
+                        {"variable":"MyDevices",    "value":"DYNAMIK let device = $NewDevice; let mydevices = $MyDevices; (device.model_name == \"SHDM-1\" ? ((mydevices.findIndex(i=>i.ip==device.ip)==-1) ? mydevices.push(device) : mydevices) : mydevices); JSON.stringify(mydevices); "}
+                        ],
                         "evaldo":[{"test":"DYNAMIK let device = $NewDevice; device.model_name == \"SHDM-1\"; ","then":"__PERSIST", "or":""}]}
         ],
         "command": {"type": "static", "command": "$MyDevices", "queryresult": "$.*"}
