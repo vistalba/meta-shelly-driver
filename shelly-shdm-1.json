@@ -17,7 +17,7 @@
         "DeviceType":"SHDM-1"
     },
     "register":{
-        "registerheadertext": "Shelly",
+        "registerheadertext": "Shelly Dimmer 1 (SHDM-1)",
         "registerdescription": "Please enter URI of Shelly device in the following format: \n user:pass@192.168.x.x \n Port 80 is used by default. Specify the port if different.",
         "command": {"type": "static", "command": ".", "queryresult": "$.*"}
     },
