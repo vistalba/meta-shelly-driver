@@ -22,7 +22,7 @@
         "command": {"type": "static", "command": ".", "queryresult": "$.*"}
     },
     "discover": {
-        "welcomeheadertext": "Shelly",
+        "welcomeheadertext": "Shelly 1 (SHSW-1)",
         "welcomedescription": "powered by meta v2 \n by JAC459 \n X \n Driver Development \n by vistalba & MarkusM",
         "initcommandset":[{
             "label":"",
