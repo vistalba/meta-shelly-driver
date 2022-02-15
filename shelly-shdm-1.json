@@ -17,12 +17,12 @@
         "DeviceType":"SHDM-1"
     },
     "register":{
-        "registerheadertext": "Shelly Dimmer 1 (SHDM-1)",
+        "registerheadertext": "Shelly",
         "registerdescription": "Please enter URI of Shelly device in the following format: \n user:pass@192.168.x.x \n Port 80 is used by default. Specify the port if different.",
         "command": {"type": "static", "command": ".", "queryresult": "$.*"}
     },
     "discover": {
-        "welcomeheadertext": "Shelly",
+        "welcomeheadertext": "Shelly Dimmer 1 (SHDM-1)",
         "welcomedescription": "powered by meta v2 \n by JAC459 \n X \n Driver Development \n by vistalba & MarkusM",
         "initcommandset":[{
             "label":"",
