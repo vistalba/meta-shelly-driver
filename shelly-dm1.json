@@ -1,4 +1,4 @@
-{   "name":"Shelly",
+{   "name":"Shelly Dimmer 1",
     "manufacturer":"Shelly",
     "type":"AVRECEIVER",
     "version":1,
@@ -13,7 +13,8 @@
                   "DeviceURI": "",
                   "DevicePort":"",
                   "DeviceUsername":"",
-                  "DevicePassword":""
+                  "DevicePassword":"",
+                  "DeviceType":"SHDM-1"
     },
     "register":{
         "registerheadertext": "Shelly",
@@ -41,7 +42,7 @@
                         "queryresult" : "$.",
                         "evalwrite":[
                         {"variable":"NewDevice",    "value":"DYNAMIK let device = $NewDevice; device.name = JSON.parse(\"$Result\").name; device.model_name= JSON.parse(\"$Result\").device.type; JSON.stringify(device); "},
-                        {"variable":"MyDevices",    "value":"DYNAMIK let device = $NewDevice; let mydevices = $MyDevices; (device.model_name == \"SHDM-1\" ? ((mydevices.findIndex(i=>i.ip==device.ip)==-1) ? mydevices.push(device) : mydevices) : mydevices); JSON.stringify(mydevices); "}
+                        {"variable":"MyDevices",    "value":"DYNAMIK let device = $NewDevice; let mydevices = $MyDevices; (device.model_name == \"$DeviceType\" ? ((mydevices.findIndex(i=>i.ip==device.ip)==-1) ? mydevices.push(device) : mydevices) : mydevices); JSON.stringify(mydevices); "}
                         ],
                         "evaldo":[{"test":"DYNAMIK let device = $NewDevice; device.model_name == \"SHDM-1\"; ","then":"__PERSIST", "or":""}]}
         ],
@@ -51,15 +52,13 @@
     "dynamicname":"DYNAMIK_INST_START DYNAMIK JSON.parse(\"$Result\").name DYNAMIK_INST_END",
     "dynamicid":  "DYNAMIK_INST_START DYNAMIK JSON.parse(\"$Result\").ip DYNAMIK_INST_END",
     "variables":{
-        "PowerStatus": "",
+        "PowerStatus": "false",
         "DeviceURI": "DYNAMIK_INST_START DYNAMIK JSON.parse(\"$Result\").ip   DYNAMIK_INST_END",
         "DevicePort":"DYNAMIK_INST_START DYNAMIK JSON.parse(\"$Result\").port DYNAMIK_INST_END"
     },
     "labels":{
         "PowerStatus" :              {"label":"PowerStatus",              "listen":"PowerStatus"}
     },
-
-
     "listeners":{
         "ShellyPowerStatus" : {"type":"http-rest", "isHub":false, "command": "{\"verb\":\"get\",\"call\":\"http://$DeviceUsername:$DevicePassword@$DeviceURI:$DevicePort/light/0\"}", "pooltime":"3000", "poolduration":"",
             "queryresult" : "$.ison",
@@ -68,13 +67,9 @@
             ]
         }
     },
-    "switches":{
-      "POWER" : {"label":"On", "listen":"PowerStatus", "evaldo":[{"test":"DYNAMIK $Result", "then":"POWER ON", "or":"POWER OFF"}]}
-    },
-
     "buttons":{
-        "POWER ON":           {"label":"", "type":"http-get", "command":"http://$DeviceUsername:$DevicePassword@$DeviceURI:$DevicePort/light/0?turn=on",        "evaldo":[{"test":true, "then":"__INITIALISE", "or":""}]},
-        "POWER OFF":          {"label":"", "type":"http-get", "command":"http://$DeviceUsername:$DevicePassword@$DeviceURI:$DevicePort/light/0?turn=off",       "evaldo":[{"test":true, "then":"__CLEANUP",    "or":""}]},
+        "POWER ON":           {"label":"", "type":"http-get", "command":"http://$DeviceUsername:$DevicePassword@$DeviceURI:$DevicePort/light/0?turn=on",        "evaldo":[{"test":true, "then":"__INITIALISE", "or":""}], "evalwrite":[{"variable":"PowerStatus","value":true}]},
+        "POWER OFF":          {"label":"", "type":"http-get", "command":"http://$DeviceUsername:$DevicePassword@$DeviceURI:$DevicePort/light/0?turn=off",       "evaldo":[{"test":true, "then":"__CLEANUP",    "or":""}], "evalwrite":[{"variable":"PowerStatus","value":false}]},
         "POWER TOGGLE":       {"label":"", "type":"http-get", "command":"http://$DeviceUsername:$DevicePassword@$DeviceURI:$DevicePort/light/0?turn=toggle"}
     }
   }
