@@ -18,7 +18,7 @@
     },
     "register":{
         "registerheadertext": "Shelly",
-        "registerdescription": "Please enter the IP address of your device. \n For example: 192.168.178.1 \n Port 80 is used by default. Specify the port if different.",
+        "registerdescription": "Please enter URI of Shelly device in the following format: \n user:pass@192.168.x.x \n Port 80 is used by default. Specify the port if different.",
         "command": {"type": "static", "command": ".", "queryresult": "$.*"}
     },
     "discover": {
@@ -52,18 +52,14 @@
     "dynamicname":"DYNAMIK_INST_START DYNAMIK JSON.parse(\"$Result\").name DYNAMIK_INST_END",
     "dynamicid":  "DYNAMIK_INST_START DYNAMIK JSON.parse(\"$Result\").ip DYNAMIK_INST_END",
     "variables":{
-        "PowerStatus": "false",
+        "PowerStatus": false,
         "DeviceURI": "DYNAMIK_INST_START DYNAMIK JSON.parse(\"$Result\").ip   DYNAMIK_INST_END",
         "DevicePort":"DYNAMIK_INST_START DYNAMIK JSON.parse(\"$Result\").port DYNAMIK_INST_END"
     },
-    "labels":{
-        "PowerStatus" : {"label":"PowerStatus", "listen":"PowerStatus"}
-    },
     "listeners":{
-        "ShellyPowerStatus" : {"type":"http-rest", "isHub":false, "command": "{\"verb\":\"get\",\"call\":\"http://$DeviceUsername:$DevicePassword@$DeviceURI:$DevicePort/light/0\"}", "pooltime":"3000", "poolduration":"",
-            "queryresult" : "$.ison",
+        "ShellyPowerStatus" : {"type":"http-rest", "isHub":false, "command": "{\"verb\":\"get\",\"call\":\"http://$DeviceUsername:$DevicePassword@$DeviceURI:$DevicePort/light/0\"}", "pooltime":"10000", "poolduration":"",
             "evalwrite" : [
-                {"variable": "PowerStatus", "value": "DYNAMIK JSON.parse(\"$Result\")" }
+                {"variable": "PowerStatus", "value": "DYNAMIK JSON.parse(\"$Result\").ison" }
             ]
         }
     },
@@ -73,8 +69,8 @@
     "buttons":{
         "POWER ON":    {"label":"", "type":"static",   "command":"", "evaldo":[{"test":true,"then":"__INITIALISE", "or":""}]},
         "POWER OFF":   {"label":"", "type":"static",   "command":"", "evaldo":[{"test":true,"then":"__CLEANUP",    "or":""}]},
-        "SWITCHON":    {"label":"", "type":"http-get", "command":"http://$DeviceUsername:$DevicePassword@$DeviceURI:$DevicePort/light/0?turn=on",  "evalwrite":[{"variable":"PowerStatus","value":true}]},
-        "SWITCHOFF":   {"label":"", "type":"http-get", "command":"http://$DeviceUsername:$DevicePassword@$DeviceURI:$DevicePort/light/0?turn=off", "evalwrite":[{"variable":"PowerStatus","value":false}]},
+        "SWITCHON":    {"label":"", "type":"http-get", "command":"http://$DeviceUsername:$DevicePassword@$DeviceURI:$DevicePort/light/0?turn=on",  "evalwrite":[{"variable":"PowerStatus","value":true}], "evaldo":[{"test":true,"then":"__INITIALISE", "or":""}] },
+        "SWITCHOFF":   {"label":"", "type":"http-get", "command":"http://$DeviceUsername:$DevicePassword@$DeviceURI:$DevicePort/light/0?turn=off", "evalwrite":[{"variable":"PowerStatus","value":false}], "evaldo":[{"test":true,"then":"__CLEANUP",    "or":""}] },
         "POWER TOGGLE":{"label":"", "type":"http-get", "command":"http://$DeviceUsername:$DevicePassword@$DeviceURI:$DevicePort/light/0?turn=toggle"}
     }
   }
