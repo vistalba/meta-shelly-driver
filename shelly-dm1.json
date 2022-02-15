@@ -1,0 +1,117 @@
+{   "name":"Shelly",
+    "manufacturer":"Shelly",
+    "type":"AVRECEIVER",
+    "version":1,
+    "compatible-meta":"1.0.4",
+    "persistedvariables":{
+        "MyDevices": "[]",
+        "IsRegistered": false,
+        "ToInitiate": true
+    },
+          "variables":{
+                  "NewDevice":"[]",
+                  "DeviceURI": "",
+                  "DevicePort":"",
+                  "DeviceUsername":"",
+                  "DevicePassword":""
+    },
+    "register":{
+        "registerheadertext": "Shelly",
+        "registerdescription": "Please enter the IP address of your device. \n For example: 192.168.178.1 \n Port 80 is used by default. Specify the port if different.",
+        "command": {"type": "static", "command": ".", "queryresult": "$.*"}
+    },
+    "discover": {
+        "welcomeheadertext": "Shelly",
+        "welcomedescription": "powered by meta v2 \n by JAC459 \n X \n Driver Development \n by stonie2oo4 & vistalba",
+        "initcommandset":[{
+            "label":"",
+                        "type":"static",
+                        "command":"$RegistrationCode",
+                        "queryresult":"",
+                        "evalwrite":[
+                            {"variable":"NewDevice",    "value":"DYNAMIK let device = {\"username\":\"\", \"password\":\"\", \"ip\":\"\", \"port\":\"\", \"model_name\":\"\", \"name\":\"\" }; device.name = \"\"; device.model_name = \"\"; device.username = \"$Result\".split(\":\")[0]; device.password = \"$Result\".split(\":\")[1].split(\"@\")[0]; device.ip = \"$Result\".split(\"@\")[1].split(\":\")[0]; device.port = (\"$Result\".split(\"@\")[1].split(\":\")[1]!=undefined?\"$Result\".split(\"@\")[1].split(\":\")[1]:\"80\"); JSON.stringify(device); "},
+                            {"variable":"DeviceURI",    "value":"DYNAMIK \"$Result\".split(\"@\")[1].split(\":\")[0]; "},
+                            {"variable":"DevicePort",   "value":"DYNAMIK \"$Result\".split(\"@\")[1].split(\":\")[1]!=undefined?\"$Result\".split(\"@\")[1].split(\":\")[1]:\"80\"; "},
+                            {"variable":"DeviceUsername", "value":"DYNAMIK \"$Result\".split(\":\")[0]; "},
+                            {"variable":"DevicePassword", "value":"DYNAMIK \"$Result\".split(\":\")[1].split(\"@\")[0]; "}
+                        ]},
+                        {
+                        "type":"http-rest",
+                        "command": "{\"verb\":\"get\",\"call\":\"http://$DeviceUsername:$DevicePassword@$DeviceURI:$DevicePort/settings\"}",
+                        "queryresult" : "$.",
+                        "evalwrite":[
+                        {"variable":"NewDevice",    "value":"DYNAMIK let device = $NewDevice; device.name = JSON.parse(\"$Result\").name; device.model_name= JSON.parse(\"$Result\").device.type; JSON.stringify(device); "},
+                        {"variable":"MyDevices",    "value":"DYNAMIK let device = $NewDevice; let mydevices = $MyDevices; ((mydevices.findIndex(i=>i.ip==device.ip)==-1) ? mydevices.push(device) : mydevices); JSON.stringify(mydevices); "}
+                         ],
+                        "evaldo":[{"test":"DYNAMIK let device = $NewDevice; device.model_name == \"SHDM-1\"; ","then":"__PERSIST", "or":""}]}
+        ],
+        "command": {"type": "static", "command": "$MyDevices", "queryresult": "$.*"}
+    },
+    "template":{
+    "dynamicname":"DYNAMIK_INST_START DYNAMIK JSON.parse(\"$Result\").name DYNAMIK_INST_END",
+    "dynamicid":  "DYNAMIK_INST_START DYNAMIK JSON.parse(\"$Result\").ip DYNAMIK_INST_END",
+    "variables":{
+        "PowerStatus": "",
+        "VolumeStatus": "",
+        "MuteStatus":"",
+        "Channel":"",
+        "EventDescription":"",
+        "EventDescriptionExtended":"",
+        "Eventname":"",
+        "EventDuration":"",
+        "Eventremaining":"",
+        "Recordactiv":"",
+        "enigma2URI": "DYNAMIK_INST_START DYNAMIK JSON.parse(\"$Result\").ip   DYNAMIK_INST_END",
+        "enigma2Port":"DYNAMIK_INST_START DYNAMIK JSON.parse(\"$Result\").port DYNAMIK_INST_END"
+    },
+    "labels":{
+        "PowerStatus" :              {"label":"PowerStatus",              "listen":"PowerStatus"},
+        "VolumeStatus" :             {"label":"VolumeStatus",             "listen":"VolumeStatus"},
+        "MuteStatus" :               {"label":"MuteStatus",               "listen":"MuteStatus"},
+        "Channel" :                  {"label":"Channel",                  "listen":"Channel"},
+        "EventDescription" :         {"label":"EventDescription",         "listen":"EventDescription"},
+        "EventDescriptionExtended" : {"label":"EventDescriptionExtended", "listen":"EventDescriptionExtended"},
+        "Eventname" :                {"label":"Eventname",                "listen":"Eventname"},
+        "EventDuration" :            {"label":"EventDuration",            "listen":"EventDuration"},
+        "Eventremaining" :           {"label":"Eventremaining",           "listen":"Eventremaining"},
+        "Recordactiv" :              {"label":"Recordactiv",              "listen":"Recordactiv"}
+    },
+    "listeners":{
+        "Enigma2PowerStatus" : {"type":"http-rest", "isHub":false, "command": "{\"verb\":\"get\",\"call\":\"http://$enigma2URI/web/powerstate\"}", "pooltime":"3000", "poolduration":"",
+            "queryresult" : "$.",
+            "evalwrite" : [
+                { "variable": "PowerStatus",    "value": "DYNAMIK let res = JSON.parse(\"$Result\")[0].e2powerstate; res.e2instandby[0].replace(/\\s/g, \"\") " }
+            ]
+        },
+        "Enigma2VolumeStatus" : {"type":"http-rest", "isHub":false, "command": "{\"verb\":\"get\",\"call\":\"http://$enigma2URI/web/vol\"}", "pooltime":"3000", "poolduration":"",
+            "queryresult" : "$.",
+            "evalwrite" : [
+                { "variable": "VolumeStatus",  "value": "DYNAMIK let res = JSON.parse(\"$Result\")[0].e2volume; res.e2current[0] " },
+                { "variable": "MuteStatus",    "value": "DYNAMIK let res = JSON.parse(\"$Result\")[0].e2volume; res.e2ismuted[0] " }
+            ]
+        },
+        "Enigma2EventStatus" : {"type":"http-rest", "isHub":false, "command": "{\"verb\":\"get\",\"call\":\"http://$enigma2URI/web/getcurrent\"}", "pooltime":"3000", "poolduration":"",
+            "queryresult" : "$.",
+            "evalwrite" : [
+                { "variable": "Channel",                  "value": "DYNAMIK let res = JSON.parse(\"$Result\")[0].e2currentserviceinformation; res.e2eventlist[0].e2event[0].e2eventservicename[0] " },
+                { "variable": "EventDescription",         "value": "DYNAMIK let res = JSON.parse(\"$Result\")[0].e2currentserviceinformation; res = res.e2eventlist[0].e2event[0].e2eventdescription[0]; res[0]!=undefined? res.replace(/(\\r\\n|\\n|\\r)/gm,\" \") : \"N/A\"  " },
+                { "variable": "Eventname",                "value": "DYNAMIK let res = JSON.parse(\"$Result\")[0].e2currentserviceinformation; res = res.e2eventlist[0].e2event[0].e2eventname[0]; res[0]!=undefined? res.replace(/(\\r\\n|\\n|\\r)/gm,\" \") : \"N/A\"  " },
+                { "variable": "EventDescriptionExtended", "value": "DYNAMIK let res = JSON.parse(\"$Result\")[0].e2currentserviceinformation; res = res.e2eventlist[0].e2event[0].e2eventdescriptionextended[0]; res[0]!=undefined? res.replace(/(\\r\\n|\\n|\\r)/gm,\" \") : \"N/A\"  " },
+                { "variable": "EventDuration",            "value": "DYNAMIK let res = JSON.parse(\"$Result\")[0].e2currentserviceinformation; Math.round(Number(res.e2eventlist[0].e2event[0].e2eventduration[0])/60) " },
+                { "variable": "Eventremaining",           "value": "DYNAMIK let res = JSON.parse(\"$Result\")[0].e2currentserviceinformation; Math.round(Number(res.e2eventlist[0].e2event[0].e2eventremaining[0])/60) " }
+            ]
+        },
+        "Enigma2RecordStatus" : {"type":"http-rest", "isHub":false, "command": "{\"verb\":\"get\",\"call\":\"http://$enigma2URI/web/timerlist\"}", "pooltime":"3000", "poolduration":"",
+            "queryresult" : "$.",
+            "evalwrite" : [
+                { "variable": "Recordactiv",  "value": "DYNAMIK let res = JSON.parse(\"$Result\")[0].e2timerlist; res.e2timer[0].e2state[0] " }
+            ]
+        }
+        },
+    "buttons":{
+        "POWER ON":           {"label":"", "type":"http-get", "command":"http://$DeviceUsername:$DevicePassword@$DeviceURI:$DevicePort/light/0?turn=on"},
+        "POWER OFF":          {"label":"", "type":"http-get", "command":"http://$DeviceUsername:$DevicePassword@$DeviceURI:$DevicePort/light/0?turn=off"},
+        "POWER TOGGLE":       {"label":"", "type":"http-get", "command":"http://$DeviceUsername:$DevicePassword@$DeviceURI:$DevicePort/light/0?turn=toggle"}
+    }
+  }
+}
