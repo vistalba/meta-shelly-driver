@@ -49,29 +49,36 @@
         "command": {"type": "static", "command": "$MyDevices", "queryresult": "$.*"}
     },
     "template":{
-    "dynamicname":"DYNAMIK_INST_START DYNAMIK JSON.parse(\"$Result\").name DYNAMIK_INST_END",
+    "dynamicname": "DYNAMIK_INST_START DYNAMIK JSON.parse(\"$Result\").name DYNAMIK_INST_END",
     "dynamicid":  "DYNAMIK_INST_START DYNAMIK JSON.parse(\"$Result\").ip DYNAMIK_INST_END",
     "variables":{
         "PowerStatus": false,
+        "Brightness": "100",
+        "SavedBright": "100",
         "DeviceURI": "DYNAMIK_INST_START DYNAMIK JSON.parse(\"$Result\").ip   DYNAMIK_INST_END",
-        "DevicePort":"DYNAMIK_INST_START DYNAMIK JSON.parse(\"$Result\").port DYNAMIK_INST_END"
+        "DevicePort": "DYNAMIK_INST_START DYNAMIK JSON.parse(\"$Result\").port DYNAMIK_INST_END"
     },
     "listeners":{
-        "ShellyPowerStatus" : {"type":"http-rest", "isHub":false, "command": "{\"verb\":\"get\",\"call\":\"http://$DeviceUsername:$DevicePassword@$DeviceURI:$DevicePort/light/0\"}", "pooltime":"10000", "poolduration":"",
-            "evalwrite" : [
-                {"variable": "PowerStatus", "value": "DYNAMIK JSON.parse(\"$Result\").ison" }
+        "ShellyStatus" : {"type":"http-rest", "isHub":false, "command": "{\"verb\":\"get\",\"call\":\"http://$DeviceUsername:$DevicePassword@$DeviceURI:$DevicePort/light/0\"}", "pooltime":"10000", "poolduration":"",
+            "evalwrite": [
+                {"variable": "PowerStatus", "value": "DYNAMIK JSON.parse(\"$Result\").ison" },
+                {"variable" : "Brightness", "value": "DYNAMIK JSON.parse(\"$Result\").brightness" }
             ]
         }
     },
     "switches":{
-      "POWER" : {"label":"On", "listen":"PowerStatus", "evaldo":[{"test":"DYNAMIK $Result", "then":"SWITCHON", "or":"SWITCHOFF"}]}
+        "POWER" : {"label":"On", "listen":"PowerStatus", "evaldo":[{"test":"DYNAMIK $Result", "then":"SWITCHON", "or":"SWITCHOFF"}]}
+    },
+    "sliders":{
+        "BRIGHTNESS": {"label":"Brightness", "unit" : "%", "listen" : "Brightness", "evaldo":[{"test":true, "then":"BRIGHTNESSCHANGE", "or":""}]}
     },
     "buttons":{
         "POWER ON":    {"label":"", "type":"static",   "command":"", "evaldo":[{"test":true,"then":"__INITIALISE", "or":""}]},
         "POWER OFF":   {"label":"", "type":"static",   "command":"", "evaldo":[{"test":true,"then":"__CLEANUP",    "or":""}]},
         "SWITCHON":    {"label":"", "type":"http-get", "command":"http://$DeviceUsername:$DevicePassword@$DeviceURI:$DevicePort/light/0?turn=on",  "evalwrite":[{"variable":"PowerStatus","value":true}] },
         "SWITCHOFF":   {"label":"", "type":"http-get", "command":"http://$DeviceUsername:$DevicePassword@$DeviceURI:$DevicePort/light/0?turn=off", "evalwrite":[{"variable":"PowerStatus","value":false}] },
-        "POWER TOGGLE":{"label":"", "type":"http-get", "command":"http://$DeviceUsername:$DevicePassword@$DeviceURI:$DevicePort/light/0?turn=toggle"}
+        "POWER TOGGLE":{"label":"", "type":"http-get", "command":"http://$DeviceUsername:$DevicePassword@$DeviceURI:$DevicePort/light/0?turn=toggle"},
+        "BRIGHTNESSCHANGE": {"label":"", "type":"http-get", "command":"http://$DeviceUsername:$DevicePassword@$DeviceURI:$DevicePort/light/0?turn=on&brightness=$Brightness"}
     }
   }
 }
