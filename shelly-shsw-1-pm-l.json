@@ -1,4 +1,4 @@
-{   "name":"Shelly 1",
+{   "name":"Shelly 1, 1PM & 1L",
     "manufacturer":"Shelly",
     "type":"LIGHT",
     "version":1,
@@ -15,7 +15,7 @@
         "DevicePort":"",
         "DeviceUsername":"",
         "DevicePassword":"",
-        "DeviceType":"SHSW-1"
+        "DeviceType":"[\"SHSW-1\", \"SHSW-PM\", \"SHSW-L\"]"
     },
     "register":{
         "registerheadertext": "Shelly",
@@ -23,7 +23,7 @@
         "command": {"type": "static", "command": ".", "queryresult": "$.*"}
     },
     "discover": {
-        "welcomeheadertext": "Shelly 1 (SHSW-1)",
+        "welcomeheadertext": "Shelly 1, 1PM & 1L (SHSW-1, SHSW-PM & SHSW-L)",
         "welcomedescription": "powered by meta v2 \n by JAC459 \n X \n Driver Development \n by vistalba & MarkusM",
         "initcommandset":[{
             "label":"",
@@ -43,9 +43,9 @@
             "queryresult" : "$.",
             "evalwrite":[
                 {"variable":"NewDevice",    "value":"DYNAMIK let device = $NewDevice; device.name = JSON.parse(\"$Result\").name; device.model_name= JSON.parse(\"$Result\").device.type; device.mac_address=JSON.parse(\"$Result\").device.mac; JSON.stringify(device); "},
-                {"variable":"MyDevices",    "value":"DYNAMIK let device = $NewDevice; let mydevices = $MyDevices; (device.model_name == \"$DeviceType\" ? ((mydevices.findIndex(i=>i.ip==device.ip)==-1) ? mydevices.push(device) : mydevices) : mydevices); JSON.stringify(mydevices); "}
+                {"variable":"MyDevices",    "value":"DYNAMIK let device = $NewDevice; let mydevices = $MyDevices; ( $DeviceType.includes(device.model_name) ? ((mydevices.findIndex(i=>i.ip==device.ip)==-1) ? mydevices.push(device) : mydevices) : mydevices); JSON.stringify(mydevices); "}
             ],
-            "evaldo":[{"test":"DYNAMIK let device = $NewDevice; device.model_name == \"$DeviceType\"; ","then":"__PERSIST", "or":""}]}
+            "evaldo":[{"test":"DYNAMIK let device = $NewDevice; $DeviceType.includes(device.model_name); ","then":"__PERSIST", "or":""}]}
         ],
         "command": {"type": "static", "command": "$MyDevices", "queryresult": "$.*"}
     },
