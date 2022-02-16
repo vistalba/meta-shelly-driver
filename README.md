@@ -41,6 +41,7 @@ Important: After adding the device to Neeo you have to make the recipe visible i
 - Search driver (Shelly)
 - Select the propper driver for your Shelly device type!
 - Enter URI for Shelly device (format example: username:password@192.168.178.55:80 | [username]:[password]@[ip-address]:[port])
+  Important: If you are using special characters in your username/password you have to encode it as described in RFC1738 (https://datatracker.ietf.org/doc/html/rfc1738#section-3.1 | not tested) 
 - Device name will be discovered. Select the propper device by your naming.
 - Select a room which the device should be added.
 
