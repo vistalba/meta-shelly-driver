@@ -1,7 +1,7 @@
 {   "name":"Shelly 2.5 Roller Shutter (SHSW-25)",
     "manufacturer":"Shelly",
     "type":"AVRECEIVER",
-    "version":1,
+    "version":2,
     "compatible-meta":"1.0.4",
     "persistedvariables":{
         "MyDevices": "[]",
@@ -10,7 +10,6 @@
     },
     "variables":{
         "NewDevice":"[]",
-        "MyDevices":"",
         "DeviceURI": "",
         "DevicePort":"",
         "DeviceUsername":"",
