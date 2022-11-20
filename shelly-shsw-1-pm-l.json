@@ -1,7 +1,7 @@
 {   "name":"Shelly 1, 1PM & 1L",
     "manufacturer":"Shelly",
     "type":"LIGHT",
-    "version":1,
+    "version":2,
     "compatible-meta":"1.0.4",
     "persistedvariables":{
         "MyDevices": "[]",
@@ -10,7 +10,6 @@
     },
     "variables":{
         "NewDevice":"[]",
-        "MyDevices":"",
         "DeviceURI": "",
         "DevicePort":"",
         "DeviceUsername":"",
